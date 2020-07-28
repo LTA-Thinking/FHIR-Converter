@@ -1,0 +1,27 @@
+module.exports = async function (context, req) {
+    context.res.header("Content-Type", "text/html");
+    context.res.body = "<form enctype=\"multipart/form-data\" method=\"post\" name=\"fileinfo\">"
+            + "<input type=\"file\" name=\"file\" required />"
+            + "<input type=\"submit\" value=\"Convert the file!\" />"
+            + "</form>"
+            + "<div></div>"
+            + "<script>"
+            + "var form = document.forms.namedItem(\"fileinfo\");"
+            + "form.addEventListener('submit', function(ev) {"
+            + "var oOutput = document.querySelector(\"div\"),"
+            + "oData = new FormData(form);"
+            + "var oReq = new XMLHttpRequest();"
+            + "oReq.open(\"POST\", \"http://localhost:7071/api/FhirConverter/cda/ccd.hbs\", true);"
+            + "oReq.onload = function(oEvent) {"
+            + "if (oReq.status == 200) {"
+            + "oOutput.innerHTML = oReq.response;"
+            + "} else {"
+            + "oOutput.innerHTML = \"Error \" + oReq.status + \" occurred when trying to upload your file.<br \/>\";}};"
+            + "var fileData = oData.get(\"file\");"
+            + "fileData.text().then(text => {"
+            + "oReq.send(JSON.stringify({\"srcDataBase64\": btoa(text)}));"
+            + "});"
+            + "ev.preventDefault();"
+            + "}, false);"
+            + "</script>";
+};

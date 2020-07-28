@@ -1,5 +1,5 @@
 {
-  "name": "test-function",
+  "name": "fhir-converter",
   "version": "1.0.0",
   "description": "",
   "scripts": {
@@ -22,6 +22,7 @@
     "deepmerge": "^4.2.2",
     "express": "^4.16.4",
     "fhir": "^4.7.9",
+    "fs-extra": "^8.1.0",
     "handlebars": "^4.7.6",
     "memory-cache": "^0.2.0",
     "ncp": "^2.0.0",

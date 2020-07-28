@@ -3,12 +3,13 @@
 // Licensed under the MIT License (MIT). See LICENSE in the repo root for license information.
 // -------------------------------------------------------------------------------------------------
 
+var fs = require('fs');
 var Handlebars = require('handlebars');
 var helpers = require('./handlebars-helpers').external;
 
 var handlebarsInstances = {};
 
-module.exports.instance = function (createNew, dataHandler, currentContextTemplatesMap) {
+module.exports.instance = function (createNew, dataHandler, templateFilesLocation, currentContextTemplatesMap) {
     if (createNew) {
         handlebarsInstances = {};
     }
@@ -24,6 +25,9 @@ module.exports.instance = function (createNew, dataHandler, currentContextTempla
                     var content;
                     if (currentContextTemplatesMap && options.name in currentContextTemplatesMap) {
                         content = currentContextTemplatesMap[options.name];
+                    }
+                    else {
+                        content = fs.readFileSync(templateFilesLocation + "/" + options.name);
                     }
                     var preprocessedContent = dataHandler.preProcessTemplate(content.toString());
                     handlebarsInstances[dataType].registerPartial(options.name, preprocessedContent);

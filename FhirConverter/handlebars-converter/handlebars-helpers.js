@@ -5,7 +5,10 @@
 
 var uuidv3 = require('uuid/v3');
 var HandlebarsUtils = require('handlebars').Utils;
+var constants = require('../constants/constants');
+var fs = require('fs');
 var crypto = require('crypto');
+var jsonProcessor = require('../outputProcessor/jsonProcessor');
 var specialCharProcessor = require('../inputProcessor/specialCharProcessor');
 var zlib = require('zlib');
 
@@ -450,6 +453,31 @@ module.exports.external = [
                 throw message;
             }
             return '';
+        }
+    },
+    {
+        name: 'evaluate',
+        description: 'Returns template result object: evaluate templatePath inObj',
+        func: function (templatePath, inObj) {
+            try {
+                var handlebarsInstance = constants.SESSION_CONTEXT.handlebarInstance;
+                var dataType = constants.SESSION_CONTEXT.dataTypeHandler.dataType;
+                let templateLocation = constants.BASE_TEMPLATE_FILES_LOCATION;
+
+                var partial = handlebarsInstance.partials[templatePath];
+
+                if (typeof partial !== 'function') {
+                    var content = fs.readFileSync(templateLocation + "/" + dataType + "/" + templatePath);
+
+                    // register partial with compilation output
+                    handlebarsInstance.registerPartial(templatePath, handlebarsInstance.compile(content.toString()));
+                    partial = handlebarsInstance.partials[templatePath];
+                }
+                return JSON.parse(jsonProcessor.Process(partial(inObj.hash)));
+            }
+            catch (err) {
+                throw `helper "evaluate" : ${err}`;
+            }
         }
     },
     {
